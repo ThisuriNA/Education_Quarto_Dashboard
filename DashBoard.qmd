@@ -1,0 +1,435 @@
+---
+title: "Learning Across Sri Lanka: Student Demographics and School Resources – 2023"
+format:
+   dashboard:
+     theme: darkly
+      css: styles.css
+---
+
+```{r}
+
+#| echo: FALSE
+#| message: FALSE
+
+#load packages
+library(readxl)
+library(ceylon)
+library(sf)
+library(plotly)
+library(viridis)
+library(bslib)
+library(bsicons)
+library(tidyverse)
+library(DT)
+
+#load the data for the districts
+data("district")
+data1 <- read_excel("Book1.xlsx")
+new_df <- merge(data1, district, by = "DISTRICT", all.x = TRUE) # add new data
+new_df <- st_as_sf(new_df) # convert data frame into sf 
+
+```
+
+```{r}
+
+total_sch <- sum(new_df$`Total Schools`)
+total_nsch <- sum(new_df$`National Schools`)
+total_psch <- sum(new_df$`Provincial Schools`)
+total_st <- sum(new_df$`Total Students`)
+total_t <- sum(new_df$`Total Teachers`)
+
+```
+
+# Schools
+
+## Row 1 {height="20%"}
+
+```{r}
+
+value_box("Total Number of Goverment School",total_sch,
+   showcase = bsicons::bs_icon("mortarboard"),
+  theme = value_box_theme(bg ="#29c247")
+)
+
+```
+
+```{r}
+
+value_box(
+  title = "Total Number of National School",
+  value = total_nsch,
+  showcase = bsicons::bs_icon("book"),
+  theme = value_box_theme(bg ="#13bd65")
+)
+
+```
+
+```{r}
+
+value_box(
+  title = "Total Number of Provincial School",
+  value = total_psch,
+  showcase = bsicons::bs_icon("file-earmark-text"),
+  theme = value_box_theme(bg ="#4c77ed")
+)
+
+```
+
+## Row 2 {height="80%"}
+
+###  {.tabset}
+
+#### Total Schools
+
+```{r,fig.width=8, fig.height=4.7}
+p <- ggplot(new_df)+
+  geom_sf(aes(fill = `Total Schools`,
+              text = paste(DISTRICT,"<br>",
+                           "Total Schools:",`Total Schools`))) +
+  scale_fill_viridis(name = "Total Number of Schools")+
+  theme_void()+
+  theme(axis.line = element_blank())
+  
+
+ggplotly(p,tooltip = "text") %>%
+  layout(
+    hoverlable = list(bgcolor = "white"))
+
+```
+
+#### National Schools
+
+```{r,fig.width=8, fig.height=4.7}
+p1 <- ggplot(new_df)+
+  geom_sf(aes(fill = `National Schools`,
+              text = paste(DISTRICT,"<br>",
+                           "Total National Schools:",`National Schools`))) +
+  scale_fill_viridis(name = "Total Number of National Schools",option = "A")+
+  theme_void()+
+  theme(axis.line = element_blank())
+
+ggplotly(p1,tooltip = "text") %>%
+  layout(hoverlable = list(bgcolor = "white"))
+
+```
+
+#### Provincial Schools
+
+```{r,fig.width=8, fig.height=4.7}
+
+p2 <- ggplot(new_df)+
+  geom_sf(aes(fill = `Provincial Schools`,
+              text = paste(DISTRICT,"<br>",
+                           "Total Provincial Schools:",`Provincial Schools`))) +
+  scale_fill_viridis(name = "Total Number of Provincial Schools",option = "G")+
+  theme_void()+
+  theme(axis.line = element_blank())
+
+ggplotly(p2,tooltip = "text") %>%
+  layout(hoverlable = list(bgcolor = "white"))
+
+```
+
+###  {width="40%"}
+
+```{r title = "Schools by Category",fig.asp=1}
+
+data <-c(1544233,1033882,693146,611427)
+names <- c("1AB","1C","Type 2","Type 3")
+df <- data.frame(names,data)
+
+df |>
+  mutate(per = data/sum(data)*100)|>
+  ggplot(aes(names,per,fill = names))+
+  geom_bar(stat = "identity")+
+  scale_fill_discrete()+
+  geom_text(aes(label = round(per,2)),
+            vjust = -0.2,
+            size = 7,
+            fontface = "bold")+
+  labs(x = "Category", y = "Percentage")+
+  theme_classic()+
+  ylim(0,100)+
+  theme(axis.title = element_text(face = "bold",size = 17),
+        axis.text = element_text(color = "black",size = 15,face = "bold"),
+        legend.position = "none")
+
+
+```
+
+# Students
+
+## Row 1 {height="20%"}
+
+```{r}
+
+value_box("Total Number of Students",total_st,
+  showcase = bsicons::bs_icon("People fill"),
+  theme = value_box_theme(bg ="#05AEE1")
+)
+
+```
+
+```{r}
+
+value_box(
+  title = "Percentage of Male Students",
+  value = "49.5%",
+  showcase = bsicons::bs_icon("Person-standing"),
+  theme = value_box_theme(bg ="#6744D3")
+)
+
+```
+
+```{r}
+
+value_box(
+  title = "Percentage of Female Students",
+  value = "50.5%",
+  showcase = bsicons::bs_icon("Person-standing-dress"),
+  theme = value_box_theme(bg ="#ED53B7",)
+)
+
+```
+
+## Row 2 {height="80%"}
+
+###  {.tabset}
+
+#### Total Number of Students
+
+```{r,fig.width=8, fig.height=4.7}
+f <- ggplot(new_df)+
+  geom_sf(aes(fill = `Total Students`,
+              text = paste(DISTRICT,"<br>",
+                           "Total Students:",`Total Students`))) +
+  scale_fill_viridis(name = "Total Number of Students",
+                     labels = scales::comma)+
+  theme_void()+
+  theme(axis.line = element_blank())
+  
+
+ggplotly(f,tooltip = "text") %>%
+  layout(
+    hoverlable = list(bgcolor = "white"))
+
+```
+
+#### National School Students
+
+```{r,fig.width=8, fig.height=4.7}
+f1 <- ggplot(new_df)+
+  geom_sf(aes(fill = `National Students`,
+              text = paste(DISTRICT,"<br>",
+                           "Total Students:",`National Students`))) +
+  scale_fill_viridis(name = "Total Number of National Students",option = "A")+
+  theme_void()+
+  theme(title = element_text("Total Number of Students in National Schools"),axis.line = element_blank())
+
+ggplotly(f1,tooltip = "text") %>%
+  layout(hoverlable = list(bgcolor = "white"))
+
+```
+
+#### Provincial School Students
+
+```{r,fig.width=8, fig.height=4.7}
+
+f2 <- ggplot(new_df)+
+  geom_sf(aes(fill = `Provincial Schools`,
+              text = paste(DISTRICT,"<br>",
+                           "Total Students:",`Provincial Schools`))) +
+  scale_fill_viridis(name = "Total Number of Provincial Students",option = "G")+
+  theme_void()+
+  theme(title = element_text("Total Number of Students in Provincial Schools"),axis.line = element_blank())
+
+ggplotly(f2,tooltip = "text") %>%
+  layout(hoverlable = list(bgcolor = "white"))
+
+```
+
+###  {width="40%"}
+
+```{r title = "Gender Distribution by School Type"}
+
+school_data <- data.frame(
+  Category = c("1AB Schools", "1C Schools", "Type 2 Schools", "Type 3 Schools"),
+  Male = c(48.4, 49.0, 51.3, 51.4),
+  Female = c(51.6, 51.0, 48.7, 48.6)
+)
+
+
+plot_data <- school_data |>
+  pivot_longer(cols = c(Male, Female), 
+               names_to = "Gender", 
+               values_to = "Percentage")
+
+# Create cluster bar chart
+  ggplot(plot_data, aes(x = Category, y = Percentage, fill = Gender)) +
+  geom_bar(stat ="identity", position = "dodge") +
+  scale_fill_manual(values = c("Male" = "#6744D3", "Female" = "#ED53B7")) +
+  labs(x = "School Type",
+       y = "Percentage (%)",
+       fill = "Gender")+
+  ylim(0,100)+
+  theme_classic()+ 
+  theme(axis.title = element_text(face = "bold",size = 17),
+        axis.text = element_text(size = 13,colour = "black",face = "bold"),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 13,colour = "black",face = "bold"))
+
+```
+
+# Teachers
+
+## Row 1 {height="30%"}
+
+```{r}
+
+value_box("Total Number of Goverment School Teachers", "237787",
+   showcase = bsicons::bs_icon("people-fill"),
+  theme = value_box_theme(bg ="#6744D3")
+)
+
+```
+
+```{r}
+
+value_box(
+  title = "Student Teacher Ratio ",
+  value = "16.3",
+  showcase = bsicons::bs_icon("r-circle-fill"),
+  theme = value_box_theme(bg ="#29c247")
+)
+
+```
+
+## Row 2 {height="70%"}
+
+###  {.tabset}
+
+#### Total School Teachers
+
+```{r,fig.width=8, fig.height=4.7}
+a <- ggplot(new_df)+
+  geom_sf(aes(fill = `Total Teachers`,
+              text = paste(DISTRICT,"<br>",
+                           "Total Teachers:",`Total Teachers`))) +
+  scale_fill_viridis(name = "Total Number of Teachers")+
+  theme_void()+
+  theme(axis.line = element_blank())
+  
+
+ggplotly(a,tooltip = "text") %>%
+  layout(
+    hoverlable = list(bgcolor = "white"))
+
+```
+
+#### National School Teachers
+
+```{r,fig.width=8, fig.height=4.7}
+a1 <- ggplot(new_df)+
+  geom_sf(aes(fill = `National Teachers`,
+              text = paste(DISTRICT,"<br>",
+                           "Total School Teachers:",`National Teachers`))) +
+  scale_fill_viridis(name = "Total Number of National School Teachers",option = "A")+
+  theme_void()+
+  theme(axis.line = element_blank())
+
+ggplotly(a1,tooltip = "text") %>%
+  layout(hoverlable = list(bgcolor = "white"))
+
+```
+
+#### Provincial School Teachers
+
+```{r,fig.width=8, fig.height=4.7}
+
+a2 <- ggplot(new_df)+
+  geom_sf(aes(fill = `Provincial Teachers`,
+              text = paste(DISTRICT,"<br>",
+                           "Total School Teacher:",`Provincial Teachers`))) +
+  scale_fill_viridis(name = "Total Number of Provincial School Total School Teacher",option = "G")+
+  theme_void()+
+  theme(axis.line = element_blank())
+
+ggplotly(a2,tooltip = "text") %>%
+  layout(hoverlable = list(bgcolor = "white"))
+
+```
+
+###  {width="50%"}
+
+```{r title = "Education Level by School Type",fig.asp=1}
+
+school_data1 <- data.frame(
+  Category = c("1AB Schools", "1C Schools", "Type 2 Schools", "Type 3 Schools"),
+  Graduate_Trained = c(40072,28134,21167,11888),
+  Graduate = c(11036,11502,10518,4739),
+  Trained = c(28482,24057,24674,16716),
+  Untrained = c(787,1279,1442,950),
+  Other =c(80,92,98,74)
+)
+
+
+plot_data1 <- school_data1 |>
+  pivot_longer(cols = c(Graduate,Trained,Graduate_Trained,Untrained,Other), 
+               names_to = "Education Level", 
+               values_to = "Values")
+
+# Create cluster bar chart
+ggplot(plot_data1, aes(x = `Education Level`,y = Values,fill = `Education Level`))+
+  geom_col(position = "dodge")+
+  facet_grid(~Category)+
+  scale_fill_viridis(option = "D",discrete = TRUE)+
+  labs(y = "Number of Teachers")+
+  theme_bw(base_size = 17)+
+  theme(axis.title = element_text(face = "bold",size = 17),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 11,colour = "black",face = "bold"))
+
+```
+
+# Data
+
+The data used in this Dashboard is shown below and can be downloaded as a CSV.
+
+###  {width="80%"}
+
+```{r}
+
+
+
+datatable(data1,
+           extensions = "Buttons",
+           options = list(
+             dom = 'Bfrtip',
+             buttons = c('copy',
+                         'print',
+                         'csv')
+           ))
+    
+```
+
+# About
+
+### {width="25%"}
+
+This interactive dashboard provides a comprehensive overview of Sri Lanka's education landscape in 2023, covering schools, students, and teachers across districts. Users can explore key metrics through dynamic value boxes highlighting totals such as government schools, national schools, provincial schools, and overall student numbers. Interactive maps display the distribution of schools, students, and teachers, while tabbed visualizations allow detailed comparison between national and provincial institutions. Additional charts showcase school categories, gender distribution among students, and teachers’ education levels, enabling an intuitive understanding of patterns and trends. Built with R, ggplot2, plotly, and reactable, the dashboard supports interactive exploration, including filtering and downloading of data tables.
+
+### About: Schools Dashboard {width="25%"}
+
+This dashboard provides a high-level overview of the structure and distribution of the government school system in Sri Lanka as of 2023. It breaks down the total number of schools into key administrative categories, specifically distinguishing between National Schools and Provincial Schools. The data highlights the composition of the school system, showing that the vast majority of institutions are managed at the provincial level. Furthermore, it delves deeper into the categorization of schools by type (1AB, 1C, 2, 3), which is a crucial indicator of the resources, facilities, and academic streams offered by each institution. This visualization is essential for understanding the foundation infrastructure of the Sri Lankan education system and planning for equitable resource allocation.
+
+### About: Students Dashboard {width="25%"}
+
+This panel focuses on the student population within Sri Lanka's government schools in 2023. It presents the total number of students enrolled, showcasing a nearly equal gender distribution across the system. The data is further segmented by school type (1AB, 1C, 2, 3), revealing how the student population is distributed across institutions with varying levels of resources and facilities. Understanding this distribution is critical for analyzing issues of access, equity, and capacity within the education system. It helps policymakers identify which school types serve the largest student populations and where targeted investments might be needed most.
+
+### About: Teachers Dashboard {width="25%"}
+
+This section details the human resources powering Sri Lanka's government schools, specifically the teaching workforce. It presents the total number of teachers and breaks down their distribution between National and Provincial schools. A critical metric featured is the Student-Teacher Ratio of 16.3:1, which is a vital indicator of class size, potential individualized attention, and the overall health of the education system. The dashboard also analyzes the distribution of teachers across different school types (1AB, 1C, 2, 3), providing insight into whether teaching resources are aligned with student population densities in these various categories.

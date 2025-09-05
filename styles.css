@@ -1,0 +1,18 @@
+.table {
+  color: white;
+}
+
+.dataTables_wrapper {
+  color: white;
+}
+
+.dataTables_filter input, 
+.dataTables_length select {
+  background-color: #222222;
+  color: white;
+  border: 1px solid #375a7f;
+}
+
+.dataTables_info {
+  color: white !important;
+}
