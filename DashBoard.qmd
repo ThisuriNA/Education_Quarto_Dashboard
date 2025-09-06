@@ -2,7 +2,7 @@
 title: "Learning Across Sri Lanka: Student Demographics and School Resources – 2023"
 format:
    dashboard:
-      embed-resources: true
+      embed-resources: false
 theme: darkly
 css: styles.css
 ---
