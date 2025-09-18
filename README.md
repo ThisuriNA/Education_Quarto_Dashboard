@@ -6,6 +6,10 @@ Education is a crucial sector in a country. Because if students have a good educ
 
 The topic is “**Learning across Sri Lanka**,” which has directly enhanced how the school system is distributed throughout the districts. Interactive maps display the distribution of schools, students, and teachers, while tabbed visualizations allow detailed comparison between national and provincial institutions. Additional charts showcase school categories, gender distribution among students, and teachers’ education levels, enabling an intuitive understanding of patterns and trends. Built with R, ggplot2, plotly, and reactable, the dashboard supports interactive exploration, including filtering and downloading of data tables.
 
+<br>
+
+You can find the published **Dash Board** at this [**Link**](https://dashboard-quarto.netlify.app/)
+
 <br/>
 
 ## **Schools Tab**
@@ -19,7 +23,6 @@ This dashboard provides a high-level overview of the structure and distribution 
 ![](DashBoard_files/figure-html/image1.jpg)
 
 <br/>
-
 
 ## **Student Tab**
 
@@ -45,8 +48,4 @@ This section details the human resources powering Sri Lanka’s government schoo
 
 <br/>
 
-## **Live Dash Board**
 
-[**View Dashboard Here**]()
-
-<br/>
